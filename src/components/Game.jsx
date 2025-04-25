@@ -20,6 +20,7 @@ export default function Game() {
   const [isNumbersVisible, setIsNumbersVisible] = useState(true)
   const [guess, setGuess] = useState(-1)
   const [guessIsCorrect, setGuessIsCorrect] = useState(null)
+  const [countdown, setCountdown] = useState(null)
 
   useEffect(() => {
     if (!name) navigate('/')
@@ -30,37 +31,34 @@ export default function Game() {
     return numbers.sort(() => Math.random() - 0.5)
   }
 
+  const setupRound = () => {
+    setGrid(shuffleNumbers())
+    setTargetNumber(Math.floor(Math.random() * 9) + 1)
+    startTimer(difficulties[level].time)
+    setGuess(-1)
+    setGuessIsCorrect(null)
+  }
+
   const handleStart = () => {
     setGameStarted(true)
     setScore(0)
-    setGrid(shuffleNumbers())
-    setTargetNumber(Math.floor(Math.random() * 9) + 1)
-    startTimer(difficulties[level].time)
-    setGuess(-1)
-    setGuessIsCorrect(null)
-  }
-
-  const handleNext = () => {
-    setGrid(shuffleNumbers())
-    setTargetNumber(Math.floor(Math.random() * 9) + 1)
-    startTimer(difficulties[level].time)
-    setGuess(-1)
-    setGuessIsCorrect(null)
+    setupRound()
   }
 
   const startTimer = (time) => {
-    let countdown = time
+    setCountdown(time)
     setIsNumbersVisible(true)
 
     const intervalId = setInterval(() => {
-      console.log(countdown)
-
-      countdown -= 1
-      if (countdown <= 0) {
-        clearInterval(intervalId)
-        setIsNumbersVisible(false)
-      }
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(intervalId)
+          setIsNumbersVisible(false)
+        }
+        return prev - 1
+      })
     }, 1000)
+
     setTimer(intervalId)
   }
 
@@ -90,7 +88,7 @@ export default function Game() {
       {!gameStarted ? (
         <>
           <div>
-            <label htmlFor="level">Nivel de dificultad:</label>
+            <label htmlFor="level">Dificultad:</label>
             <select
               id="level"
               value={level}
@@ -102,14 +100,19 @@ export default function Game() {
             </select>
           </div>
 
-          <button onClick={handleStart}>Jugar</button>
+          <button style={{ marginTop: '20px' }} onClick={handleStart}>
+            Jugar
+          </button>
         </>
       ) : (
         <div>
+          <h4>
+            Dificultad {level} ({difficulties[level].time} s)
+          </h4>
           <h3>
             {' '}
             {isNumbersVisible
-              ? 'Memoriza los números'
+              ? `Tiempo restante ${countdown} s`
               : `¿Dónde estaba el número ${targetNumber} ?`}
           </h3>
           <div className="grid">
@@ -139,9 +142,13 @@ export default function Game() {
 
           {guess >= 0 &&
             (guessIsCorrect ? (
-              <button onClick={handleNext}>Siguiente</button>
+              <button style={{ marginTop: '20px' }} onClick={setupRound}>
+                Siguiente
+              </button>
             ) : (
-              <button onClick={handleEnd}>Finalizar</button>
+              <button style={{ marginTop: '20px' }} onClick={handleEnd}>
+                Finalizar
+              </button>
             ))}
         </div>
       )}

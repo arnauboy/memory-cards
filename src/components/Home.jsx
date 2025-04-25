@@ -18,6 +18,7 @@ export default function Home() {
     <div className="container">
       <h1>Memory Cards</h1>
       <input
+        style={{ marginRight: '10px' }}
         type="text"
         placeholder="Tu nombre..."
         value={name}
