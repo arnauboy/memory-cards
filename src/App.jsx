@@ -6,13 +6,11 @@ import { NameProvider } from './context/NameProvider'
 export default function App() {
   return (
     <NameProvider>
-      <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/game" element={<Game />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </BrowserRouter>
     </NameProvider>
   )
 }
