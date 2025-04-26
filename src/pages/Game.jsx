@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useName } from '../context/NameProvider'
+import GameGrid from '../components/GameGrid'
 
 const difficulties = {
   bajo: { time: 10, points: 10 },
@@ -11,6 +12,7 @@ const difficulties = {
 export default function Game() {
   const navigate = useNavigate()
   const { name } = useName()
+
   const [level, setLevel] = useState('bajo')
   const [gameStarted, setGameStarted] = useState(false)
   const [score, setScore] = useState(0)
@@ -80,76 +82,59 @@ export default function Game() {
     setScore(0)
   }
 
+  const buttonProps = guessIsCorrect
+    ? { text: 'Siguiente', onClick: setupRound }
+    : { text: 'Finalizar', onClick: handleEnd }
+
   return (
     <div className="container">
-      <h2>Hola, {name} 👋</h2>
-      <p className="score">Puntos: {score}</p>
-
-      {!gameStarted ? (
-        <>
+      <h2>Jugador {name} 🎮</h2>
+      <div className="gameInfo">
+        <p className="score">Puntos: {score}</p>
+        {!gameStarted ? (
           <div>
-            <label htmlFor="level">Dificultad:</label>
             <select
               id="level"
               value={level}
               onChange={(e) => setLevel(e.target.value)}
+              className="select"
             >
-              <option value="bajo">Bajo (10s)</option>
-              <option value="medio">Medio (5s)</option>
-              <option value="alto">Alto (2s)</option>
+              <option value="bajo">Nivel Bajo (10s)</option>
+              <option value="medio">Nivel Medio (5s)</option>
+              <option value="alto">Nivel Alto (2s)</option>
             </select>
           </div>
+        ) : (
+          <p>
+            Nivel {level} ({difficulties[level].time} s)
+          </p>
+        )}
+      </div>
 
-          <button style={{ marginTop: '20px' }} onClick={handleStart}>
-            Jugar
-          </button>
-        </>
+      {!gameStarted ? (
+        <button style={{ marginTop: '20px' }} onClick={handleStart}>
+          Jugar
+        </button>
       ) : (
         <div>
-          <h4>
-            Dificultad {level} ({difficulties[level].time} s)
-          </h4>
           <h3>
-            {' '}
             {isNumbersVisible
               ? `Tiempo restante ${countdown} s`
-              : `¿Dónde estaba el número ${targetNumber} ?`}
+              : `¿Dónde se esconde el número ${targetNumber}?`}
           </h3>
-          <div className="grid">
-            {grid.map((number, index) => (
-              <div
-                key={index}
-                className="grid-item"
-                onClick={() => {
-                  guess < 0 && !isNumbersVisible && handleGuess(index)
-                }}
-                style={{
-                  backgroundColor: isNumbersVisible
-                    ? '#f2f2f2'
-                    : guess < 0 || index !== guess
-                      ? '#ccc'
-                      : guessIsCorrect
-                        ? 'green'
-                        : !guessIsCorrect
-                          ? 'red'
-                          : '#ccc',
-                }}
-              >
-                {isNumbersVisible || guess === index ? number : ''}
-              </div>
-            ))}
-          </div>
+          <GameGrid
+            grid={grid}
+            isNumbersVisible={isNumbersVisible}
+            guess={guess}
+            guessIsCorrect={guessIsCorrect}
+            handleGuess={handleGuess}
+          />
 
-          {guess >= 0 &&
-            (guessIsCorrect ? (
-              <button style={{ marginTop: '20px' }} onClick={setupRound}>
-                Siguiente
-              </button>
-            ) : (
-              <button style={{ marginTop: '20px' }} onClick={handleEnd}>
-                Finalizar
-              </button>
-            ))}
+          {guess >= 0 && (
+            <button style={{ marginTop: '20px' }} onClick={buttonProps.onClick}>
+              {buttonProps.text}
+            </button>
+          )}
         </div>
       )}
     </div>

@@ -5,6 +5,10 @@ body {
   padding: 0;
 }
 
+h1 {
+  margin-bottom: 40px;
+}
+
 .container {
   max-width: 500px;
   margin: 50px auto;
@@ -12,26 +16,25 @@ body {
 }
 
 input {
-  border: 2px solid transparent;
   width: 15em;
   height: 2.5em;
   padding-left: 0.8em;
+  border: 2px solid transparent;
+  border-radius: 10px;
   outline: none;
   overflow: hidden;
-  border-radius: 10px;
   transition: all 0.5s;
 }
 
 input:hover,
 input:focus {
   border: 2px solid #4f46e5;
-  box-shadow: 0px 0px 0px 7px rgb(74, 157, 236, 20%);
-  background-color: white;
+  box-shadow: 0px 0px 0px 7px rgba(74, 157, 236, 0.2);
+  background-color: #ffffff;
 }
 
 button {
   background-color: #4f46e5;
-  /* Indigo-600 */
   color: #ffffff;
   padding: 0.6em 1.2em;
   border: none;
@@ -44,18 +47,43 @@ button {
 
 button:hover {
   background-color: #4338ca;
-  /* Indigo-700 */
   transform: translateY(-2px);
 }
 
 button:active {
   background-color: #3730a3;
-  /* Indigo-800 */
   transform: translateY(0);
 }
 
-/* Game */
-.container {
+.select {
+  width: 100%;
+  max-width: 250px;
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  outline: none;
+}
+
+.select:hover {
+  border-color: #888;
+}
+
+.select:focus {
+  border-color: #3730a3;
+}
+
+.gameInfo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.score {
+  color: #3730a3;
+  font-weight: bold;
+  padding: 10px 20px;
   text-align: center;
 }
 
@@ -75,43 +103,12 @@ button:active {
   align-items: center;
   background-color: #f2f2f2;
   border: 2px solid #ccc;
-  cursor: pointer;
+  border-radius: 8px;
   font-size: 24px;
   font-weight: bold;
-  border-radius: 8px;
+  cursor: pointer;
 }
 
 .grid-item:hover {
   background-color: #ddd;
-}
-
-.score {
-  color: #000;
-  font-weight: bold;
-  padding: 10px 20px;
-  text-align: center;
-  transition: transform 0.3s ease;
-  animation: breathe 4s ease-in-out infinite;
-}
-
-.score:hover {
-  transform: scale(1.1);
-}
-
-@keyframes breathe {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.05);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-h1 {
-  margin-bottom: 40px;
 }
