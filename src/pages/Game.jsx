@@ -73,6 +73,9 @@ export default function Game() {
         setGuessIsCorrect(true)
       } else {
         setGuessIsCorrect(false)
+        if (navigator.vibrate) {
+          navigator.vibrate(200)
+        }
       }
     }
   }
