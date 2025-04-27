@@ -1,4 +1,3 @@
-// src/context/NameContext.jsx
 import { createContext, useContext, useState } from 'react'
 
 const NameContext = createContext()

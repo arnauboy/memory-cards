@@ -15,8 +15,10 @@ export default function GameGrid({
     <div className="grid">
       {grid.map((number, index) => (
         <div
+          data-testid={number}
           key={index}
           className="grid-item"
+          role="gridcell"
           onClick={() => {
             guess < 0 && !isNumbersVisible && handleGuess(index)
           }}

@@ -1,9 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
-import Home from '../components/Home'
 import { NameProvider } from '../context/NameProvider'
-
+import Home from '../pages/Home'
 
 describe('Home', () => {
   it('shows title and allows writing a name', () => {
@@ -12,7 +11,7 @@ describe('Home', () => {
         <NameProvider>
           <Home />
         </NameProvider>
-      </BrowserRouter> 
+      </BrowserRouter>,
     )
 
     const input = screen.getByPlaceholderText('Tu nombre...')
