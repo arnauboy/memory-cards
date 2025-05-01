@@ -19,7 +19,6 @@ export default function Game() {
   const [targetNumber, setTargetNumber] = useState(null)
   const [isNumbersVisible, setIsNumbersVisible] = useState(true)
   const [guess, setGuess] = useState(-1)
-  const [guessIsCorrect, setGuessIsCorrect] = useState(null)
 
   useEffect(() => {
     if (!name) navigate('/')
@@ -34,7 +33,6 @@ export default function Game() {
     setGrid(shuffleNumbers())
     setTargetNumber(Math.floor(Math.random() * 9) + 1)
     setGuess(-1)
-    setGuessIsCorrect(null)
     setIsNumbersVisible(true)
   }
 
@@ -50,9 +48,7 @@ export default function Game() {
     if (!isNumbersVisible) {
       if (grid[index] === targetNumber) {
         setScore(score + GAME_CONFIG.DIFFICULTIES[level].points)
-        setGuessIsCorrect(true)
       } else {
-        setGuessIsCorrect(false)
         if (navigator.vibrate) {
           navigator.vibrate(200)
         }
@@ -64,6 +60,9 @@ export default function Game() {
     setGameStarted(false)
     setScore(0)
   }
+
+  const guessIsCorrect =
+    guess >= 0 && !isNumbersVisible && grid[guess] === targetNumber
 
   const buttonProps = guessIsCorrect
     ? { text: 'Siguiente', onClick: setupRound }
