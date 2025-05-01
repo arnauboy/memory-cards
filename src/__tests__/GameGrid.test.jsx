@@ -1,8 +1,9 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import GameGrid from '../components/GameGrid/GameGrid.jsx'
 import { describe, it, expect, vi } from 'vitest'
+import GAME_CONFIG from '../config/gameConfig.jsx'
 
-const grid = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+const grid = GAME_CONFIG.GRID_CELLS
 
 describe('GameGrid', () => {
   it('renders the correct number of grid items', () => {
@@ -33,7 +34,7 @@ describe('GameGrid', () => {
 
     const gridItems = screen.getAllByRole('gridcell')
     gridItems.forEach((item) => {
-      expect(item).toHaveStyle('background-color: #f2f2f2')
+      expect(item).toHaveClass('visible')
     })
   })
 
@@ -50,7 +51,7 @@ describe('GameGrid', () => {
 
     const gridItems = screen.getAllByRole('gridcell')
     gridItems.forEach((item) => {
-      expect(item).toHaveStyle('background-color: #ccc')
+      expect(item).toHaveClass('not-visible')
     })
   })
 
@@ -66,7 +67,7 @@ describe('GameGrid', () => {
     )
 
     const gridItems = screen.getAllByRole('gridcell')
-    expect(gridItems[4]).toHaveStyle('background-color: rgb(0, 128, 0)')
+    expect(gridItems[4]).toHaveClass('correct')
   })
 
   it('displays red background when the guess is incorrect', () => {
@@ -81,7 +82,7 @@ describe('GameGrid', () => {
     )
 
     const gridItems = screen.getAllByRole('gridcell')
-    expect(gridItems[2]).toHaveStyle('background-color: rgb(255, 0, 0)')
+    expect(gridItems[2]).toHaveClass('incorrect')
   })
 
   it('calls handleGuess when a grid item is clicked', () => {
