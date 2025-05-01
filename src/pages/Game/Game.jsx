@@ -35,6 +35,7 @@ export default function Game() {
     setTargetNumber(Math.floor(Math.random() * 9) + 1)
     setGuess(-1)
     setGuessIsCorrect(null)
+    setIsNumbersVisible(true)
   }
 
   const handleStart = () => {
