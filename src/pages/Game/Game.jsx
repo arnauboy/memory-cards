@@ -4,6 +4,8 @@ import { useName } from '../../context/NameProvider.jsx'
 import GameGrid from '../../components/GameGrid/GameGrid.jsx'
 import GAME_CONFIG from '../../config/gameConfig.jsx'
 import Button from '../../components/Button/Button.jsx'
+import Select from '../../components/Select/Select.jsx'
+import CountdownTimer from '../../components/CountdownTimer/CountdownTimer.jsx'
 import './Game.css'
 
 export default function Game() {
@@ -15,15 +17,13 @@ export default function Game() {
   const [score, setScore] = useState(0)
   const [grid, setGrid] = useState([])
   const [targetNumber, setTargetNumber] = useState(null)
-  const [_, setTimer] = useState(null)
   const [isNumbersVisible, setIsNumbersVisible] = useState(true)
   const [guess, setGuess] = useState(-1)
   const [guessIsCorrect, setGuessIsCorrect] = useState(null)
-  const [countdown, setCountdown] = useState(null)
 
   useEffect(() => {
     if (!name) navigate('/')
-  }, [])
+  }, [name, navigate])
 
   const shuffleNumbers = () => {
     const numbers = GAME_CONFIG.GRID_CELLS
@@ -33,7 +33,6 @@ export default function Game() {
   const setupRound = () => {
     setGrid(shuffleNumbers())
     setTargetNumber(Math.floor(Math.random() * 9) + 1)
-    startTimer(GAME_CONFIG.DIFFICULTIES[level].time)
     setGuess(-1)
     setGuessIsCorrect(null)
   }
@@ -42,23 +41,6 @@ export default function Game() {
     setGameStarted(true)
     setScore(0)
     setupRound()
-  }
-
-  const startTimer = (time) => {
-    setCountdown(time)
-    setIsNumbersVisible(true)
-
-    const intervalId = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(intervalId)
-          setIsNumbersVisible(false)
-        }
-        return prev - 1
-      })
-    }, 1000)
-
-    setTimer(intervalId)
   }
 
   const handleGuess = (index) => {
@@ -86,57 +68,57 @@ export default function Game() {
     ? { text: 'Siguiente', onClick: setupRound }
     : { text: 'Finalizar', onClick: handleEnd }
 
+  const handleTimeEnd = () => {
+    setIsNumbersVisible(false)
+  }
+
   return (
-    <div className="container">
-      <h2>Jugador {name} 🎮</h2>
-      <div className="gameInfo">
+    <main className="container">
+      <header>
+        <h2>Jugador {name} 🎮</h2>
+      </header>
+
+      <section className="gameInfo">
         <p className="score">Puntos: {score}</p>
         {!gameStarted ? (
-          <div>
-            <select
-              className="level-selector"
-              id="level"
-              value={level}
-              onChange={(e) => setLevel(e.target.value)}
-            >
-              <option value="bajo">Nivel Bajo (10s)</option>
-              <option value="medio">Nivel Medio (5s)</option>
-              <option value="alto">Nivel Alto (2s)</option>
-            </select>
-          </div>
+          <Select level={level} onChange={setLevel} />
         ) : (
           <p>
             Nivel {level} ({GAME_CONFIG.DIFFICULTIES[level].time} s)
           </p>
         )}
-      </div>
+      </section>
 
-      {!gameStarted ? (
-        <Button className="game-screen" onClick={handleStart}>
-          Jugar
-        </Button>
-      ) : (
-        <div>
-          <h3>
-            {isNumbersVisible
-              ? `Tiempo restante ${countdown} s`
-              : `¿Dónde se esconde el número ${targetNumber}?`}
-          </h3>
-          <GameGrid
-            grid={grid}
-            isNumbersVisible={isNumbersVisible}
-            guess={guess}
-            guessIsCorrect={guessIsCorrect}
-            handleGuess={handleGuess}
-          />
-
-          {guess >= 0 && (
-            <Button className="game-screen" onClick={buttonProps.onClick}>
-              {buttonProps.text}
-            </Button>
-          )}
-        </div>
-      )}
-    </div>
+      <section className="game">
+        {!gameStarted ? (
+          <Button className="game-screen" onClick={handleStart}>
+            Jugar
+          </Button>
+        ) : (
+          <article>
+            {isNumbersVisible ? (
+              <CountdownTimer
+                initialTime={GAME_CONFIG.DIFFICULTIES[level].time}
+                onTimeEnd={handleTimeEnd}
+              />
+            ) : (
+              <h3>{`¿Dónde se esconde el número ${targetNumber}?`}</h3>
+            )}
+            <GameGrid
+              grid={grid}
+              isNumbersVisible={isNumbersVisible}
+              guess={guess}
+              guessIsCorrect={guessIsCorrect}
+              handleGuess={handleGuess}
+            />
+            {guess >= 0 && (
+              <Button className="game-screen" onClick={buttonProps.onClick}>
+                {buttonProps.text}
+              </Button>
+            )}
+          </article>
+        )}
+      </section>
+    </main>
   )
 }
