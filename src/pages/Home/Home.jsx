@@ -3,18 +3,19 @@ import { useName } from '../../context/NameProvider'
 import Input from '../../components/Input/Input'
 import Button from '../../components/Button/Button'
 import './Home.css'
+import { useCallback } from 'react'
 
 export default function Home() {
   const { name } = useName()
   const navigate = useNavigate()
 
-  const handleStart = () => {
+  const handleStart = useCallback(() => {
     if (name) {
       navigate('/game')
     } else {
       alert('Por favor, introduce tu nombre')
     }
-  }
+  }, [name, navigate])
 
   return (
     <main className="container">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useName } from '../../context/NameProvider.jsx'
 import GameGrid from '../../components/GameGrid/GameGrid.jsx'
@@ -24,52 +24,106 @@ export default function Game() {
     if (!name) navigate('/')
   }, [name, navigate])
 
-  const shuffleNumbers = () => {
+  const shuffleNumbers = useCallback(() => {
     const numbers = GAME_CONFIG.GRID_CELLS
     return numbers.sort(() => Math.random() - 0.5)
-  }
+  }, [])
 
-  const setupRound = () => {
+  const setupRound = useCallback(() => {
     setGrid(shuffleNumbers())
     setTargetNumber(Math.floor(Math.random() * 9) + 1)
     setGuess(-1)
     setIsNumbersVisible(true)
-  }
+  }, [shuffleNumbers])
 
-  const handleStart = () => {
+  const startGame = () => {
     setGameStarted(true)
     setScore(0)
     setupRound()
   }
 
-  const handleGuess = (index) => {
-    setGuess(index)
+  const endGame = useCallback(() => {
+    setGameStarted(false)
+    setScore(0)
+  }, [])
 
-    if (!isNumbersVisible) {
-      if (grid[index] === targetNumber) {
-        setScore(score + GAME_CONFIG.DIFFICULTIES[level].points)
-      } else {
-        if (navigator.vibrate) {
+  const processGuess = useCallback(
+    (index) => {
+      setGuess(index)
+      if (!isNumbersVisible) {
+        if (grid[index] === targetNumber) {
+          setScore(
+            (prevScore) => prevScore + GAME_CONFIG.DIFFICULTIES[level].points,
+          )
+        } else if (navigator.vibrate) {
           navigator.vibrate(200)
         }
       }
-    }
-  }
+    },
+    [isNumbersVisible, grid, targetNumber, level],
+  )
 
-  const handleEnd = () => {
-    setGameStarted(false)
-    setScore(0)
-  }
+  const handleTimeEnd = useCallback(() => {
+    setIsNumbersVisible(false)
+  }, [])
 
-  const guessIsCorrect =
+  const isGuessCorrect =
     guess >= 0 && !isNumbersVisible && grid[guess] === targetNumber
 
-  const buttonProps = guessIsCorrect
-    ? { text: 'Siguiente', onClick: setupRound }
-    : { text: 'Finalizar', onClick: handleEnd }
+  const buttonProps = useMemo(
+    () => ({
+      text: isGuessCorrect ? 'Siguiente' : 'Finalizar',
+      onClick: isGuessCorrect ? setupRound : endGame,
+    }),
+    [isGuessCorrect, setupRound, endGame],
+  )
 
-  const handleTimeEnd = () => {
-    setIsNumbersVisible(false)
+  const renderGameInfo = () => (
+    <section className="gameInfo">
+      <p className="score">Puntos: {score}</p>
+      {!gameStarted ? (
+        <Select level={level} onChange={setLevel} />
+      ) : (
+        <p>
+          Nivel {level} ({GAME_CONFIG.DIFFICULTIES[level].time} s)
+        </p>
+      )}
+    </section>
+  )
+
+  const renderGameScreen = () => {
+    if (!gameStarted) {
+      return (
+        <Button className="game-screen" onClick={startGame}>
+          Jugar
+        </Button>
+      )
+    } else {
+      return (
+        <article>
+          {isNumbersVisible ? (
+            <Timer
+              initialTime={GAME_CONFIG.DIFFICULTIES[level].time}
+              onTimeEnd={handleTimeEnd}
+            />
+          ) : (
+            <h3>{`¿Dónde se esconde el número ${targetNumber}?`}</h3>
+          )}
+          <GameGrid
+            grid={grid}
+            isNumbersVisible={isNumbersVisible}
+            guess={guess}
+            guessIsCorrect={isGuessCorrect}
+            handleGuess={processGuess}
+          />
+          {guess >= 0 && (
+            <Button className="game-screen" onClick={buttonProps.onClick}>
+              {buttonProps.text}
+            </Button>
+          )}
+        </article>
+      )
+    }
   }
 
   return (
@@ -77,48 +131,8 @@ export default function Game() {
       <header>
         <h2>Jugador {name} 🎮</h2>
       </header>
-
-      <section className="gameInfo">
-        <p className="score">Puntos: {score}</p>
-        {!gameStarted ? (
-          <Select level={level} onChange={setLevel} />
-        ) : (
-          <p>
-            Nivel {level} ({GAME_CONFIG.DIFFICULTIES[level].time} s)
-          </p>
-        )}
-      </section>
-
-      <section className="game">
-        {!gameStarted ? (
-          <Button className="game-screen" onClick={handleStart}>
-            Jugar
-          </Button>
-        ) : (
-          <article>
-            {isNumbersVisible ? (
-              <Timer
-                initialTime={GAME_CONFIG.DIFFICULTIES[level].time}
-                onTimeEnd={handleTimeEnd}
-              />
-            ) : (
-              <h3>{`¿Dónde se esconde el número ${targetNumber}?`}</h3>
-            )}
-            <GameGrid
-              grid={grid}
-              isNumbersVisible={isNumbersVisible}
-              guess={guess}
-              guessIsCorrect={guessIsCorrect}
-              handleGuess={handleGuess}
-            />
-            {guess >= 0 && (
-              <Button className="game-screen" onClick={buttonProps.onClick}>
-                {buttonProps.text}
-              </Button>
-            )}
-          </article>
-        )}
-      </section>
+      {renderGameInfo()}
+      <section className="game">{renderGameScreen()}</section>
     </main>
   )
 }
