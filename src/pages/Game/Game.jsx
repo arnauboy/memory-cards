@@ -5,7 +5,7 @@ import GameGrid from '../../components/GameGrid/GameGrid.jsx'
 import GAME_CONFIG from '../../config/gameConfig.jsx'
 import Button from '../../components/Button/Button.jsx'
 import Select from '../../components/Select/Select.jsx'
-import CountdownTimer from '../../components/CountdownTimer/CountdownTimer.jsx'
+import Timer from '../../components/Timer/Timer.jsx'
 import './Game.css'
 
 export default function Game() {
@@ -97,7 +97,7 @@ export default function Game() {
         ) : (
           <article>
             {isNumbersVisible ? (
-              <CountdownTimer
+              <Timer
                 initialTime={GAME_CONFIG.DIFFICULTIES[level].time}
                 onTimeEnd={handleTimeEnd}
               />
