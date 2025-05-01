@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useName } from '../context/NameProvider'
-import GameGrid from '../components/GameGrid'
-
-const difficulties = {
-  bajo: { time: 10, points: 10 },
-  medio: { time: 5, points: 20 },
-  alto: { time: 2, points: 30 },
-}
+import { useName } from '../../context/NameProvider.jsx'
+import GameGrid from '../../components/GameGrid/GameGrid.jsx'
+import GAME_CONFIG from '../../config/gameConfig.jsx'
+import Button from '../../components/Button/Button.jsx'
+import './Game.css'
 
 export default function Game() {
   const navigate = useNavigate()
@@ -29,14 +26,14 @@ export default function Game() {
   }, [])
 
   const shuffleNumbers = () => {
-    const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    const numbers = GAME_CONFIG.GRID_CELLS
     return numbers.sort(() => Math.random() - 0.5)
   }
 
   const setupRound = () => {
     setGrid(shuffleNumbers())
     setTargetNumber(Math.floor(Math.random() * 9) + 1)
-    startTimer(difficulties[level].time)
+    startTimer(GAME_CONFIG.DIFFICULTIES[level].time)
     setGuess(-1)
     setGuessIsCorrect(null)
   }
@@ -69,7 +66,7 @@ export default function Game() {
 
     if (!isNumbersVisible) {
       if (grid[index] === targetNumber) {
-        setScore(score + difficulties[level].points)
+        setScore(score + GAME_CONFIG.DIFFICULTIES[level].points)
         setGuessIsCorrect(true)
       } else {
         setGuessIsCorrect(false)
@@ -97,10 +94,10 @@ export default function Game() {
         {!gameStarted ? (
           <div>
             <select
+              className="level-selector"
               id="level"
               value={level}
               onChange={(e) => setLevel(e.target.value)}
-              className="select"
             >
               <option value="bajo">Nivel Bajo (10s)</option>
               <option value="medio">Nivel Medio (5s)</option>
@@ -109,15 +106,15 @@ export default function Game() {
           </div>
         ) : (
           <p>
-            Nivel {level} ({difficulties[level].time} s)
+            Nivel {level} ({GAME_CONFIG.DIFFICULTIES[level].time} s)
           </p>
         )}
       </div>
 
       {!gameStarted ? (
-        <button style={{ marginTop: '20px' }} onClick={handleStart}>
+        <Button className="game-screen" onClick={handleStart}>
           Jugar
-        </button>
+        </Button>
       ) : (
         <div>
           <h3>
@@ -134,9 +131,9 @@ export default function Game() {
           />
 
           {guess >= 0 && (
-            <button style={{ marginTop: '20px' }} onClick={buttonProps.onClick}>
+            <Button className="game-screen" onClick={buttonProps.onClick}>
               {buttonProps.text}
-            </button>
+            </Button>
           )}
         </div>
       )}

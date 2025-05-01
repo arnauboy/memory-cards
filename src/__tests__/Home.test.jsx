@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import { NameProvider } from '../context/NameProvider'
-import Home from '../pages/Home'
+import Home from '../pages/Home/Home'
 
 describe('Home', () => {
   it('shows title and allows writing a name', () => {

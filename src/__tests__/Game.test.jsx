@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
-import Game from '../pages/Game'
+import Game from '../pages/Game/Game'
 import { NameProvider } from '../context/NameProvider'
 
 vi.useFakeTimers()

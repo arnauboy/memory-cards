@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import GameGrid from '../components/GameGrid'
+import GameGrid from '../components/GameGrid/GameGrid.jsx'
 import { describe, it, expect, vi } from 'vitest'
 
 const grid = [1, 2, 3, 4, 5, 6, 7, 8, 9]

@@ -1,0 +1,27 @@
+.game-button {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    padding: 0.6em 1.2em;
+    border: none;
+    border-radius: 0.5em;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+
+}
+
+.game-button.game-screen {
+    margin-top: 10px;
+}
+
+.game-button:hover {
+    background-color: #4338ca;
+    transform: translateY(-2px);
+}
+
+.game-button:active {
+    background-color: var(--primary-color);
+    transform: translateY(0);
+}
+

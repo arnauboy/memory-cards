@@ -1,0 +1,31 @@
+.level-selector {
+    width: 100%;
+    max-width: 250px;
+    padding: 10px 14px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    outline: none;
+}
+
+.level-selector:hover {
+    border-color: #888;
+}
+
+.level-selector:focus {
+    border-color: var(--primary-color);
+}
+
+.gameInfo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.score {
+    color: var(--primary-color);
+    font-weight: bold;
+    padding: 10px 20px;
+    text-align: center;
+}
